@@ -1,0 +1,54 @@
+Arduino-based Secure Vehicle Access System (ASVAS)
+Description
+
+The Arduino-based Secure Vehicle Access System (ASVAS) is designed to provide a secure and efficient way of controlling access to a vehicle. This system uses a keypad for inputting access codes and an LCD display for user interaction. The primary functionalities include setting master and guest passwords, starting the vehicle simulation via a relay, and providing feedback on access attempts.
+Features
+
+    Secure Password Handling: Stores hashed passwords for security.
+    Master and Guest Access: Allows two levels of access with separate passwords.
+    Relay Control: Simulates vehicle starting mechanism.
+    Attempt Tracking: Keeps track of failed access attempts.
+    EEPROM Storage: Passwords and settings are stored persistently.
+
+Hardware Requirements
+
+    Arduino Board (e.g., Arduino Uno)
+    Keypad (4x4 Matrix)
+    LCD Display (16x2 with I2C Interface)
+    Relay Module
+    Basic Connecting Wires
+    Breadboard (optional, for prototyping)
+
+Software Requirements
+
+    Arduino IDE for coding and uploading the code to the Arduino board.
+    Git for version control.
+
+Installation
+
+    Clone the Repository:
+
+    bash
+
+    git clone https://github.com/tsrnc2/ASVAS.git
+
+    Setup the Hardware:
+        Connect the keypad, LCD, and relay module to the Arduino as per the circuit diagram (link to circuit diagram).
+    Load the Code:
+        Open the .ino file in Arduino IDE.
+        Connect your Arduino board to your computer.
+        Upload the code to the Arduino board.
+
+Usage
+
+    Set Master Password: On first run, set the master password.
+    Set Guest Password: Use the master password to access the menu and set/change the guest password.
+    Start Vehicle: Enter the guest password to simulate starting the vehicle.
+    Clear EEPROM: Use the master password to access the menu and clear EEPROM for system reset.
+
+Contributing
+
+Contributions to the ASVAS project are welcome. Please follow the standard Git workflow - fork the repository, make changes, and submit a pull request.
+License
+
+MIT License
