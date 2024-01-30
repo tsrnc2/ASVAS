@@ -152,30 +152,67 @@ bool comparePasswords(String enteredPassword, unsigned long storedHash) {
 }
 
 void masterMenu() {
-    lcd.clear();
-    lcd.print("1:Clr EEPROM");
-    lcd.setCursor(0, 1);
-    lcd.print("2:New Gst Pwd");
+    int page = 1;
+    const int maxPage = 3; // Total number of pages
+    displayMasterMenuPage(page);
 
-    char key = 0;
-    while (key != '1' && key != '2') {
-        key = myKeypad.getKey();
-        delay(100); // Debounce delay
-    }
-
-    if (key == '1') {
-        clearEEPROM();
-        EEPROM.put(initFlagAddress, false);
-        performInitialSetup();
-    } else if (key == '2') {
-        lcd.clear();
-        lcd.print("Enter Gst Pwd");
-        delay(1000);
-        String newGuestPassword = inputPassword();
-        setGuestPassword(newGuestPassword);
+    while (true) {
+        char key = myKeypad.getKey();
+        if (key) {
+            if (key == '#') {
+                page = page % maxPage + 1; // Cycle through pages
+                displayMasterMenuPage(page);
+            } else if (key >= '1' && key <= '4') {
+                executeMasterMenuOption(key, page);
+                break;
+            }
+            delay(100); // Debounce delay
+        }
     }
 }
 
+void displayMasterMenuPage(int page) {
+    lcd.clear();
+    if (page == 1) {
+        lcd.print("1:Clr EEPROM");
+        lcd.setCursor(0, 1);
+        lcd.print("2:New Gst Pwd");
+    } else if (page == 2) {
+        lcd.print("3:Test LCD");
+        lcd.setCursor(0, 1);
+        lcd.print("4:Test Keypad");
+    } else if (page == 3) {
+        lcd.print("5:Test Relay");
+        lcd.setCursor(0, 1);
+        lcd.print("6:Test EEPROM");
+    }
+}
+
+void executeMasterMenuOption(char option, int page) {
+    if (page == 1) {
+        // Page 1 options
+    } else if (page == 2) {
+        // Page 2 options
+        switch (option) {
+            case '3':
+                testLCD();
+                break;
+            case '4':
+                testKeypad();
+                break;
+        }
+    } else if (page == 3) {
+        // Page 3 options
+        switch (option) {
+            case '5':
+                testRelay();
+                break;
+            case '6':
+                testEEPROM();
+                break;
+        }
+    }
+}
 
 void setGuestPassword(String newGuestPassword) {
     storePassword(newGuestPassword, false);
@@ -211,4 +248,77 @@ void startVehicle() {
     lcd.clear();
     lcd.print("Car Started");
     delay(2000); // Display message for 2 seconds before clearing
+}
+
+
+void testLCD() {
+    lcd.init();
+    lcd.backlight();
+    lcd.print("Testing LCD...");
+    delay(2000);
+    lcd.clear();
+    // Check if the text is correctly displayed on the LCD.
+}
+
+
+void testKeypad() {
+    lcd.print("Press Keys");
+    while (true) {
+        char key = myKeypad.getKey();
+        if (key) {
+            lcd.clear();
+            lcd.print("Key Pressed: ");
+            lcd.print(key);
+            delay(1000);
+            lcd.clear();
+        }
+    }
+    // Check if the correct keys are displayed on the LCD.
+}
+
+
+void testRelay() {
+    digitalWrite(relayPin, HIGH); // Turn on the relay
+    lcd.print("Relay ON");
+    delay(5000); // Wait for 5 seconds
+    digitalWrite(relayPin, LOW); // Turn off the relay
+    lcd.clear();
+    lcd.print("Relay OFF");
+    delay(2000);
+    // Manually check if the relay is functioning.
+}
+
+
+void testEEPROM() {
+    // Write a test value
+    int testAddress = 10; // Choose an address that doesn't interfere with your program data
+    byte testValue = 123;
+    EEPROM.write(testAddress, testValue);
+
+    // Read the value back
+    byte readValue = EEPROM.read(testAddress);
+    if (readValue == testValue) {
+        lcd.print("EEPROM OK");
+    } else {
+        lcd.print("EEPROM Fail");
+    }
+    delay(2000);
+}
+
+
+void testPasswordHashing() {
+    String testPassword = "1234567"; // Example password
+    unsigned long hashed = hashPassword(testPassword + salt);
+
+    // Simulate storing and verifying the password
+    EEPROM.put(sizeof(bool), hashed);
+    unsigned long storedHash;
+    EEPROM.get(sizeof(bool), storedHash);
+
+    if (hashed == storedHash) {
+        lcd.print("Hashing OK");
+    } else {
+        lcd.print("Hashing Fail");
+    }
+    delay(2000);
 }
